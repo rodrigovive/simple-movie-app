@@ -2,8 +2,8 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
-import Modal from "../Modal/Modal";
-import AddMovie from "../Modal/AddMovie";
+import Modal from "../Movie/Modal";
+import FormMovie from "../Movie/FormMovie";
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1
@@ -44,7 +44,7 @@ function BoxHeader() {
           );
         }}
       >
-        <AddMovie
+        <FormMovie
           onSubmit={(values, actions) => {
             setTimeout(() => {
               alert(JSON.stringify(values, null, 2));

@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: -12
   }
 }));
-function AddMovie({ movie, title, onSubmit, ...props }) {
+function FormMovie({ movie = {}, title, onSubmit, ...props }) {
   const classes = useStyles();
   return (
     <div className={classes.paper}>
@@ -64,7 +64,7 @@ function AddMovie({ movie, title, onSubmit, ...props }) {
         initialValues={{
           movie: movie.movie || "",
           release: movie.release || new Date().toISOString(),
-          status: movie.release || ""
+          status: movie.status || ""
         }}
         onSubmit={onSubmit ? onSubmit : null}
         validationSchema={yup.object().shape({
@@ -167,4 +167,4 @@ function AddMovie({ movie, title, onSubmit, ...props }) {
   );
 }
 
-export default AddMovie;
+export default FormMovie;

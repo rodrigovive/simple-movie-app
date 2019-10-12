@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import Table from "./Table";
+import Table from "../Movie/Table";
 import BoxHeader from "./BoxHeader";
 import Container from "@material-ui/core/Container";
 

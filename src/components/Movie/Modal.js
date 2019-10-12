@@ -5,6 +5,9 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 
 const useStyles = makeStyles(theme => ({
+  container: {
+    display: "inline-block"
+  },
   modal: {
     display: "flex",
     alignItems: "center",
@@ -23,7 +26,7 @@ function TransitionsModal(props) {
   };
 
   return (
-    <div>
+    <div className={classes.container}>
       {props.renderButton &&
         props.renderButton({
           handleOpen
