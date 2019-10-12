@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -55,44 +55,45 @@ const useStyles = makeStyles(theme => ({
 function FormMovie({ movie = {}, title, onSubmit, ...props }) {
   const classes = useStyles();
   return (
-    <div className={classes.paper}>
-      <Typography component="h3" variant="h5">
-        {title || "Agregar pelicula"}
-      </Typography>
-      <Formik
-        enableReinitialize
-        initialValues={{
-          movie: movie.movie || "",
-          release: movie.release || new Date().toISOString(),
-          status: movie.status || ""
-        }}
-        onSubmit={onSubmit ? onSubmit : null}
-        validationSchema={yup.object().shape({
-          movie: yup
-            .string("Formato invalido")
-            .min(1, "Nombre de la pelicula")
-            .required("Nombre de la pelicula es requerida"),
-          release: yup
-            .date("Fecha invalida")
-            .default(function() {
-              return new Date();
-            })
-            .required("Fecha de la pelicula es requerida"),
-          status: yup
-            .string("Estado invalido")
-            .min(1, "Estado de la pelicula")
-            .required("Estado de la pelicula es requerida")
-        })}
-        render={({
-          values,
-          errors,
-          status,
-          touched,
-          handleBlur,
-          handleChange,
-          handleSubmit,
-          isSubmitting
-        }) => (
+    <Formik
+      enableReinitialize
+      initialValues={{
+        movie: movie.movie || "",
+        release: movie.release || new Date().toISOString(),
+        status: movie.status || ""
+      }}
+      onSubmit={onSubmit ? onSubmit : null}
+      validationSchema={yup.object().shape({
+        movie: yup
+          .string("Formato invalido")
+          .min(1, "Nombre de la pelicula")
+          .required("Nombre de la pelicula es requerida"),
+        release: yup
+          .date("Fecha invalida")
+          .default(function() {
+            return new Date();
+          })
+          .required("Fecha de la pelicula es requerida"),
+        status: yup
+          .string("Estado invalido")
+          .min(1, "Estado de la pelicula")
+          .required("Estado de la pelicula es requerida")
+      })}
+      render={({
+        values,
+        errors,
+        status,
+        touched,
+        handleBlur,
+        handleChange,
+        handleSubmit,
+        isSubmitting
+      }) => (
+        <div className={classes.paper}>
+          <Typography component="h3" variant="h5">
+            {title || "Agregar pelicula"}
+          </Typography>
+
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <TextField
               error={!!errors.movie}
@@ -161,9 +162,9 @@ function FormMovie({ movie = {}, title, onSubmit, ...props }) {
               )}
             </div>
           </form>
-        )}
-      />
-    </div>
+        </div>
+      )}
+    />
   );
 }
 

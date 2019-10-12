@@ -7,7 +7,7 @@ import EditSharpIcon from "@material-ui/icons/EditSharp";
 import FormMovie from "./FormMovie";
 import Modal from "./Modal";
 import contants from "../../utils/constants";
-
+import RemoveMovieDialog from "./RemoveMovieDialog";
 function Table() {
   function getDataEditMovie(row) {
     const [id, movie, release, status, ...others] = row;
@@ -54,7 +54,12 @@ function Table() {
                 }}
               />
             </Modal>
-            <DeleteSharpIcon />
+            <RemoveMovieDialog
+              title={`Desea remover la pelicula "${rowData[1].substr(0, 40)}"`}
+              renderButton={({ handleOpen, ...props }) => {
+                return <DeleteSharpIcon onClick={handleOpen} />;
+              }}
+            />
           </Fragment>
         )
       }
