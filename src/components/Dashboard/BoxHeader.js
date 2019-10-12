@@ -4,6 +4,9 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "../Movie/Modal";
 import FormMovie from "../Movie/FormMovie";
+import { useMutation } from "@apollo/react-hooks";
+import { gql } from "apollo-boost";
+import * as mutations from "../../graphql/mutations";
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1
@@ -26,6 +29,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function BoxHeader() {
+  const [
+    createMovieMutation,
+    { loading: loadingMovies, error: errorMovies, data: dataMovies }
+  ] = useMutation(gql(mutations.createMovie));
+
   const classes = useStyles();
 
   return (
@@ -45,11 +53,21 @@ function BoxHeader() {
         }}
       >
         <FormMovie
-          onSubmit={(values, actions) => {
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              actions.setSubmitting(false);
-            }, 1000);
+          onSubmit={async ({ movie, release, status }, actions) => {
+            try {
+              await createMovieMutation({
+                variables: {
+                  input: {
+                    title: movie,
+                    release,
+                    status
+                  }
+                }
+              });
+            } catch (error) {
+              console.log(error);
+            }
+            actions.setSubmitting(false);
           }}
         />
       </Modal>

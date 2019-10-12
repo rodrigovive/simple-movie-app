@@ -8,6 +8,13 @@ import FormMovie from "./FormMovie";
 import Modal from "./Modal";
 import contants from "../../utils/constants";
 import RemoveMovieDialog from "./RemoveMovieDialog";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import { gql } from "apollo-boost";
+import * as queries from "../../graphql/queries";
+import * as mutations from "../../graphql/mutations";
+
+const FAKE_DATA = [[1, "Gabby George", new Date().toISOString(), "Activo"]];
+
 function Table() {
   function getDataEditMovie(row) {
     const [id, movie, release, status, ...others] = row;
@@ -18,6 +25,48 @@ function Table() {
       status: contants.STATUS.includes(statusCurrent) ? statusCurrent : ""
     };
   }
+  const [
+    updateMovieMutation,
+    {
+      loading: loadingUpdateMovie,
+      error: errorUpdateMovie,
+      data: dataUpdateMovie
+    }
+  ] = useMutation(gql(mutations.updateMovie));
+
+  const [
+    deleteMovieMutation,
+    {
+      loading: loadingDeleteMovie,
+      error: errorDeleteMovie,
+      data: dataDeleteMovie
+    }
+  ] = useMutation(gql(mutations.deleteMovie));
+
+  const {
+    loading: loadingMovies,
+    error: errorMovies,
+    data: dataMovies
+  } = useQuery(gql(queries.listMovies));
+
+  if (loadingMovies) {
+    return <h2>Loading</h2>;
+  }
+  if (errorMovies) {
+    console.log("loading", errorMovies);
+    return <h2>Error</h2>;
+  }
+
+  const {
+    listMovies: { items: movieItems }
+  } = dataMovies;
+
+  const data = movieItems.map(
+    ({ release, id, status, title, description }, index) => {
+      return [index + 1, title, release, status, id];
+    }
+  );
+  console.log("data", data);
 
   const columns = [
     {
@@ -44,18 +93,42 @@ function Table() {
               }}
             >
               <FormMovie
-                title={`Editar "${rowData[1].substr(0, 40)}"`}
+                title={`Editar "${rowData[1]}"`}
                 movie={getDataEditMovie(rowData)}
-                onSubmit={(values, actions) => {
-                  setTimeout(() => {
-                    alert(JSON.stringify(values, null, 2));
-                    actions.setSubmitting(false);
-                  }, 1000);
+                onSubmit={async ({ movie, release, status }, actions) => {
+                  try {
+                    await updateMovieMutation({
+                      variables: {
+                        input: {
+                          id: rowData[4],
+                          title: movie,
+                          release,
+                          status
+                        }
+                      }
+                    });
+                  } catch (error) {
+                    console.log(error);
+                  }
+                  actions.setSubmitting(false);
                 }}
               />
             </Modal>
             <RemoveMovieDialog
-              title={`Desea remover la pelicula "${rowData[1].substr(0, 40)}"`}
+              title={`Desea remover la pelicula "${rowData[1]}"`}
+              onConfirm={async () => {
+                try {
+                  await deleteMovieMutation({
+                    variables: {
+                      input: {
+                        id: rowData[4]
+                      }
+                    }
+                  });
+                } catch (error) {
+                  console.log(error);
+                }
+              }}
               renderButton={({ handleOpen, ...props }) => {
                 return <DeleteSharpIcon onClick={handleOpen} />;
               }}
@@ -65,8 +138,6 @@ function Table() {
       }
     }
   ];
-
-  const data = [[1, "Gabby George", new Date().toISOString(), "Activo"]];
 
   const options = {
     filterType: "dropdown",
@@ -96,7 +167,7 @@ function Table() {
     <Fragment>
       <MUIDataTable
         title={"Peliculas"}
-        data={data}
+        data={data || FAKE_DATA}
         columns={columns}
         options={options}
       />
