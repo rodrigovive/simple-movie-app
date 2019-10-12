@@ -43,7 +43,12 @@ function TransitionsModal(props) {
           timeout: 500
         }}
       >
-        <Fade in={open}>{props.children}</Fade>
+        <Fade in={open}>
+          {props.renderForm &&
+            props.renderForm({
+              handleClose
+            })}
+        </Fade>
       </Modal>
     </div>
   );

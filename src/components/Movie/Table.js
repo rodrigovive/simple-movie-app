@@ -12,10 +12,19 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
 import { listMovies as listMoviesQuery } from "../../graphql/queries";
 import * as mutations from "../../graphql/mutations";
+import { makeStyles } from "@material-ui/core/styles";
 
 const FAKE_DATA = [[1, "Gabby George", new Date().toISOString(), "Activo"]];
-
+const useStyles = makeStyles(theme => ({
+  icon: {
+    "&:hover": {
+      cursor: "pointer"
+    }
+  }
+}));
 function Table() {
+  const classes = useStyles();
+
   function getDataEditMovie(row) {
     const [id, movie, release, status, ...others] = row;
     const statusCurrent = String(status).toLowerCase();
@@ -49,13 +58,14 @@ function Table() {
       }
     ) {
       const {
-        listMovies: { items: listMoviesItems }
+        listMovies: { items: listMoviesItems, ...others }
       } = cache.readQuery({ query: gql(listMoviesQuery) });
       cache.writeQuery({
         query: gql(listMoviesQuery),
         data: {
           listMovies: {
-            items: listMoviesItems.filter(movie => deleteMovie.id !== movie.id)
+            items: listMoviesItems.filter(movie => deleteMovie.id !== movie.id),
+            ...others
           }
         }
       });
@@ -85,7 +95,6 @@ function Table() {
       return [index + 1, title, release, status, id];
     }
   );
-  console.log("data", data);
 
   const columns = [
     {
@@ -108,31 +117,51 @@ function Table() {
           <Fragment>
             <Modal
               renderButton={({ handleOpen, ...props }) => {
-                return <EditSharpIcon onClick={handleOpen} />;
+                return (
+                  <EditSharpIcon
+                    className={classes.icon}
+                    onClick={handleOpen}
+                  />
+                );
               }}
-            >
-              <FormMovie
-                title={`Editar "${rowData[1]}"`}
-                movie={getDataEditMovie(rowData)}
-                onSubmit={async ({ movie, release, status }, actions) => {
-                  try {
-                    await updateMovieMutation({
-                      variables: {
-                        input: {
-                          id: rowData[4],
-                          title: movie,
-                          release,
-                          status
-                        }
+              renderForm={({ handleClose, ...props }) => {
+                return (
+                  <FormMovie
+                    title={`Editar "${rowData[1]}"`}
+                    movie={getDataEditMovie(rowData)}
+                    onSubmit={async ({ movie, release, status }, actions) => {
+                      try {
+                        await updateMovieMutation({
+                          variables: {
+                            input: {
+                              id: rowData[4],
+                              title: movie,
+                              release,
+                              status
+                            }
+                          },
+                          optimisticResponse: {
+                            __typename: "Mutation",
+                            updateMovie: {
+                              __typename: "Movie",
+                              id: rowData[4],
+                              release,
+                              title: movie,
+                              status,
+                              description: ""
+                            }
+                          }
+                        });
+                      } catch (error) {
+                        console.log(error);
                       }
-                    });
-                  } catch (error) {
-                    console.log(error);
-                  }
-                  actions.setSubmitting(false);
-                }}
-              />
-            </Modal>
+                      handleClose();
+                      actions.setSubmitting(false);
+                    }}
+                  />
+                );
+              }}
+            ></Modal>
             <RemoveMovieDialog
               title={`Desea remover la pelicula "${rowData[1]}"`}
               onConfirm={async () => {
@@ -149,7 +178,12 @@ function Table() {
                 }
               }}
               renderButton={({ handleOpen, ...props }) => {
-                return <DeleteSharpIcon onClick={handleOpen} />;
+                return (
+                  <DeleteSharpIcon
+                    className={classes.icon}
+                    onClick={handleOpen}
+                  />
+                );
               }}
             />
           </Fragment>
@@ -160,7 +194,7 @@ function Table() {
 
   const options = {
     filterType: "dropdown",
-    responsive: "scroll",
+    responsive: "scrollFullHeight",
     print: false,
     download: false,
     filter: false,
@@ -177,7 +211,7 @@ function Table() {
         next: "Proxima Pagina",
         previous: "Anterior Pagina",
         rowsPerPage: "Filas por pagina",
-        displayRows: "of"
+        displayRows: "de"
       }
     }
   };

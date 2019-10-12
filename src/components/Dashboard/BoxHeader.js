@@ -41,14 +41,17 @@ function BoxHeader() {
         data: { createMovie }
       }
     ) {
+      const moviesCache = cache.readQuery({ query: gql(listMoviesQuery) });
       const {
-        listMovies: { items: listMoviesItems }
-      } = cache.readQuery({ query: gql(listMoviesQuery) });
+        listMovies: { items: listMoviesItems, ...others }
+      } = moviesCache;
+
       cache.writeQuery({
         query: gql(listMoviesQuery),
         data: {
           listMovies: {
-            items: listMoviesItems.concat(createMovie)
+            items: listMoviesItems.concat(createMovie),
+            ...others
           }
         }
       });
@@ -72,26 +75,41 @@ function BoxHeader() {
             </Button>
           );
         }}
-      >
-        <FormMovie
-          onSubmit={async ({ movie, release, status }, actions) => {
-            try {
-              await createMovieMutation({
-                variables: {
-                  input: {
-                    title: movie,
-                    release,
-                    status
-                  }
+        renderForm={({ handleClose, ...props }) => {
+          return (
+            <FormMovie
+              onSubmit={async ({ movie, release, status }, actions) => {
+                try {
+                  await createMovieMutation({
+                    variables: {
+                      input: {
+                        title: movie,
+                        release,
+                        status
+                      }
+                    },
+                    optimisticResponse: {
+                      __typename: "Mutation",
+                      createMovie: {
+                        __typename: "Movie",
+                        id: 9999999,
+                        title: movie,
+                        release,
+                        status,
+                        description: ""
+                      }
+                    }
+                  });
+                } catch (error) {
+                  console.log(error);
                 }
-              });
-            } catch (error) {
-              console.log(error);
-            }
-            actions.setSubmitting(false);
-          }}
-        />
-      </Modal>
+                handleClose();
+                actions.setSubmitting(false);
+              }}
+            />
+          );
+        }}
+      />
     </Grid>
   );
 }
