@@ -78,6 +78,7 @@ function BoxHeader() {
         renderForm={({ handleClose, ...props }) => {
           return (
             <FormMovie
+              disabled={loadingMovies}
               onSubmit={async ({ movie, release, status }, actions) => {
                 try {
                   await createMovieMutation({

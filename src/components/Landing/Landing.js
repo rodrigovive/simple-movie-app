@@ -8,7 +8,6 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { green } from "@material-ui/core/colors";
-import { Redirect } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   paper: {

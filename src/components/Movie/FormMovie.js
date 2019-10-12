@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -7,10 +7,8 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { green } from "@material-ui/core/colors";
-import { Redirect } from "react-router-dom";
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker
 } from "@material-ui/pickers";
 import "date-fns";
@@ -18,7 +16,6 @@ import DateFnsUtils from "@date-io/date-fns";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 
 const useStyles = makeStyles(theme => ({
@@ -51,7 +48,13 @@ const useStyles = makeStyles(theme => ({
     marginLeft: -12
   }
 }));
-function FormMovie({ movie = {}, title, onSubmit, ...props }) {
+function FormMovie({
+  disabled = false,
+  movie = {},
+  title,
+  onSubmit,
+  ...props
+}) {
   const classes = useStyles();
   return (
     <Formik

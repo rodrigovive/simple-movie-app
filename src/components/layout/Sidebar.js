@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
@@ -11,11 +10,14 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import MailIcon from "@material-ui/icons/Mail";
+import MovieIcon from "@material-ui/icons/Movie";
+import CloseIcon from "@material-ui/icons/Close";
+
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Amplify, { Auth } from "aws-amplify";
 
 const drawerWidth = 240;
 
@@ -69,11 +71,22 @@ function Sidebar(props) {
         {["Dashboard", "Peliculas"].map((text, index) => (
           <ListItem button key={text}>
             <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              {index % 2 === 0 ? <InboxIcon /> : <MovieIcon />}
             </ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>
         ))}
+        <ListItem
+          button
+          onClick={() => {
+            Auth.signOut();
+          }}
+        >
+          <ListItemIcon>
+            <CloseIcon />
+          </ListItemIcon>
+          <ListItemText primary={"Cerrar Session"} />
+        </ListItem>
       </List>
     </div>
   );

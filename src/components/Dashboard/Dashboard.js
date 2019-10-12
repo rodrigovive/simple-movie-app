@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import Table from "../Movie/Table";
 import BoxHeader from "./BoxHeader";
 import Container from "@material-ui/core/Container";
