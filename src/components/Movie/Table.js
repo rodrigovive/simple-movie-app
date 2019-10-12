@@ -10,7 +10,7 @@ import contants from "../../utils/constants";
 import RemoveMovieDialog from "./RemoveMovieDialog";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
-import * as queries from "../../graphql/queries";
+import { listMovies as listMoviesQuery } from "../../graphql/queries";
 import * as mutations from "../../graphql/mutations";
 
 const FAKE_DATA = [[1, "Gabby George", new Date().toISOString(), "Activo"]];
@@ -41,13 +41,32 @@ function Table() {
       error: errorDeleteMovie,
       data: dataDeleteMovie
     }
-  ] = useMutation(gql(mutations.deleteMovie));
+  ] = useMutation(gql(mutations.deleteMovie), {
+    update(
+      cache,
+      {
+        data: { deleteMovie }
+      }
+    ) {
+      const {
+        listMovies: { items: listMoviesItems }
+      } = cache.readQuery({ query: gql(listMoviesQuery) });
+      cache.writeQuery({
+        query: gql(listMoviesQuery),
+        data: {
+          listMovies: {
+            items: listMoviesItems.filter(movie => deleteMovie.id !== movie.id)
+          }
+        }
+      });
+    }
+  });
 
   const {
     loading: loadingMovies,
     error: errorMovies,
     data: dataMovies
-  } = useQuery(gql(queries.listMovies));
+  } = useQuery(gql(listMoviesQuery));
 
   if (loadingMovies) {
     return <h2>Loading</h2>;

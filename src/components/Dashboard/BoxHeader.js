@@ -7,6 +7,8 @@ import FormMovie from "../Movie/FormMovie";
 import { useMutation } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
 import * as mutations from "../../graphql/mutations";
+import { listMovies as listMoviesQuery } from "../../graphql/queries";
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1
@@ -32,7 +34,26 @@ function BoxHeader() {
   const [
     createMovieMutation,
     { loading: loadingMovies, error: errorMovies, data: dataMovies }
-  ] = useMutation(gql(mutations.createMovie));
+  ] = useMutation(gql(mutations.createMovie), {
+    update(
+      cache,
+      {
+        data: { createMovie }
+      }
+    ) {
+      const {
+        listMovies: { items: listMoviesItems }
+      } = cache.readQuery({ query: gql(listMoviesQuery) });
+      cache.writeQuery({
+        query: gql(listMoviesQuery),
+        data: {
+          listMovies: {
+            items: listMoviesItems.concat(createMovie)
+          }
+        }
+      });
+    }
+  });
 
   const classes = useStyles();
 
