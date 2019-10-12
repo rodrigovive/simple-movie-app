@@ -1,0 +1,19 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "movie-react-dev-20191011201410-authRole",
+            "UnauthRoleArn": "arn:aws:iam::719120119023:role/movie-react-dev-20191011201410-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::719120119023:role/movie-react-dev-20191011201410-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "movie-react-dev-20191011201410-deployment",
+            "UnauthRoleName": "movie-react-dev-20191011201410-unauthRole",
+            "StackName": "movie-react-dev-20191011201410",
+            "StackId": "arn:aws:cloudformation:us-east-1:719120119023:stack/movie-react-dev-20191011201410/9a042ea0-ec8d-11e9-8c5f-12ff035a5bdc"
+        },
+        "categories": {
+            "auth": {
+                "moviereactf7647e55": {}
+            }
+        }
+    }
+}

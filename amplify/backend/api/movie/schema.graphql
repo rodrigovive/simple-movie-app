@@ -1,0 +1,13 @@
+type Movie @model {
+  id: ID!
+  title: String!
+  description: String
+  release: AWSDateTime
+  status: StatusType
+}
+
+enum StatusType {
+  manager
+  matriD
+  waiter
+}
